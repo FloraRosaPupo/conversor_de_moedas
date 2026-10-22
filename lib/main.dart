@@ -4,12 +4,11 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-const request = "https://api.hgbrasil.com/finance?format=json&key=1f3ee023";
+const apiKey = String.fromEnvironment('HGBRASIL_API_KEY');
+final request = Uri.https('api.hgbrasil.com', '/finance', {'format':'json','key':apiKey});
 
 void main() async {
-  //requisiçao assincrona
-  http.Response response = await http.get(request); //esperar os dados chegarem
-  print(json.decode(response.body)["results"]["currencies"]["USD"]);
+
 
   runApp(MaterialApp(
       home: Home(),
@@ -47,10 +46,17 @@ class _HomeState extends State<Home> {
   final dolarController = TextEditingController();
   final euroController = TextEditingController();
 
-  double dolar;
-  double euro;
+  double dolar = 1;
+  double euro = 1;
+  late final Future<Map> rates = getData();
 
-  //resetar os campos 
+  @override
+  void dispose() {
+    realController.dispose(); dolarController.dispose(); euroController.dispose();
+    super.dispose();
+  }
+
+  //resetar os campos
   void _clearAll(){
     realController.text = "";
     dolarController.text = "";
@@ -62,7 +68,8 @@ class _HomeState extends State<Home> {
       _clearAll();
       return;
     }
-    double real = double.parse(text); //VALOR EM REAL
+    final real = double.tryParse(text.replaceAll(',', '.'));
+    if (real == null || !real.isFinite) return; //VALOR EM REAL
     /*Conversao*/
     dolarController.text =
         (real / dolar).toStringAsFixed(2 /*dois digitos pos a virgula*/);
@@ -74,7 +81,8 @@ class _HomeState extends State<Home> {
       _clearAll();
       return;
     }
-    double dolar = double.parse(text);
+    final dolar = double.tryParse(text.replaceAll(',', '.'));
+    if (dolar == null || !dolar.isFinite) return;
     /*Conversao*/
     realController.text = (dolar * this.dolar).toStringAsFixed(2);
     euroController.text = (dolar * this.dolar / euro).toStringAsFixed(2); //convertendo pra reais e depois dividindo pelo euro
@@ -85,7 +93,8 @@ class _HomeState extends State<Home> {
       _clearAll();
       return;
     }
-    double euro = double.parse(text);
+    final euro = double.tryParse(text.replaceAll(',', '.'));
+    if (euro == null || !euro.isFinite) return;
     realController.text = (euro * this.euro).toStringAsFixed(2);
     dolarController.text = (euro * this.euro / dolar).toStringAsFixed(2);//conventendo o valor por reias e dividir pelo dolar
 
@@ -103,7 +112,7 @@ class _HomeState extends State<Home> {
       ),
       body: FutureBuilder<Map>(
         //json retorna um map
-        future: getData(), //socilicita os dados e retorna
+        future: rates, //socilicita os dados e retorna
         builder: (context, snapshot) {
           //observa qual o status da conexao
           switch (snapshot.connectionState) {
@@ -132,8 +141,8 @@ class _HomeState extends State<Home> {
                   textAlign: TextAlign.center,
                 ));
               } else {
-                dolar = snapshot.data["results"]["currencies"]["USD"]["buy"];
-                euro = snapshot.data["results"]["currencies"]["EUR"]["buy"];
+                dolar = snapshot.data!["results"]["currencies"]["USD"]["buy"];
+                euro = snapshot.data!["results"]["currencies"]["EUR"]["buy"];
 
                 return SingleChildScrollView(
                   //colocando uma borda
@@ -165,7 +174,7 @@ class _HomeState extends State<Home> {
 
 //retorna um widget
 Widget buildTextField(
-    String label, String prefixo, TextEditingController c, Function f) {
+    String label, String prefixo, TextEditingController c, ValueChanged<String> f) {
   return TextField(
     controller: c,
     //bloco de texto
