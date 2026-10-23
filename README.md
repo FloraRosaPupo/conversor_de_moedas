@@ -3,7 +3,9 @@
 Conversão entre real, dólar e euro usando cotações da HG Brasil.
 
 ## Stack e organização
-Flutter/Dart, HTTP. Defina `HGBRASIL_API_KEY` por `--dart-define`. A consulta exige internet e chave válida; a chave distribuída em um app cliente não é um segredo de servidor.
+Flutter/Dart e http.
+
+`features/converter` reúne dados e apresentação. `RatesRepository` recebe cliente HTTP e valida respostas; `ExchangeRates` contém as conversões. `main.dart` inicializa o aplicativo. Estado local da tela é suficiente; não há necessidade de Cubit para três campos.
 
 ## Executar
 Use a versão de Flutter registrada em `.github/workflows/ci.yml`.
@@ -26,3 +28,17 @@ Abra uma branch por alteração, descreva o comportamento esperado e inclua test
 
 ## Licença
 Não há licença de distribuição definida neste repositório.
+
+
+## Funcionalidades
+
+- Consulta de cotações.
+- conversão BRL/USD/EUR.
+- tratamento de entrada decimal.
+
+
+## Organização e manutenção
+
+`features/converter` reúne dados e apresentação. `RatesRepository` recebe cliente HTTP e valida respostas; `ExchangeRates` contém as conversões. `main.dart` inicializa o aplicativo. Estado local da tela é suficiente; não há necessidade de Cubit para três campos.
+
+Veja [a revisão de desenvolvimento](docs/REVISAO.md) para decisões, testes e limites, e [o guia de contribuição](CONTRIBUTING.md) para o fluxo de manutenção.
