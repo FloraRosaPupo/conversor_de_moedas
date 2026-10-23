@@ -1,11 +1,28 @@
-# Conversor de moedas
+# Conversor de Moedas
 
-Conversão entre real, dólar e euro usando cotações da HG Brasil.
+## Descrição
 
-## Stack e organização
+Aplicativo Flutter para consultar cotações da HG Brasil e converter valores entre real, dólar e euro. A consulta real exige uma chave de API configurada no ambiente de execução.
+
+## Stack e bibliotecas
+
 Flutter/Dart e http.
 
-`features/converter` reúne dados e apresentação. `RatesRepository` recebe cliente HTTP e valida respostas; `ExchangeRates` contém as conversões. `main.dart` inicializa o aplicativo. Estado local da tela é suficiente; não há necessidade de Cubit para três campos.
+Dependências e versões declaradas: [pubspec.yaml](pubspec.yaml).
+
+## Funcionalidades
+
+- Consulta de cotações.
+- Conversão BRL/USD/EUR.
+- Tratamento de entrada decimal.
+
+## Licença
+
+Não há uma licença de distribuição definida para este repositório. Nenhuma licença MIT, Apache ou equivalente é concedida por este README. As atribuições e os direitos dos materiais de terceiros permanecem preservados.
+
+## Validação e limites
+
+Conversão nas três moedas, cotação zero/ausente, erro HTTP e callback do campo. Requer HGBRASIL_API_KEY para consulta real.
 
 ## Executar
 Use a versão de Flutter registrada em `.github/workflows/ci.yml`.
@@ -25,17 +42,6 @@ A CI verifica erros de análise e os testes. Avisos e sugestões continuam visí
 
 ## Contribuir
 Abra uma branch por alteração, descreva o comportamento esperado e inclua testes para regras ou regressões. Mantenha credenciais e arquivos gerados fora do Git.
-
-## Licença
-Não há licença de distribuição definida neste repositório.
-
-
-## Funcionalidades
-
-- Consulta de cotações.
-- conversão BRL/USD/EUR.
-- tratamento de entrada decimal.
-
 
 ## Organização e manutenção
 
